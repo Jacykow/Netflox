@@ -1,4 +1,4 @@
-package java.Products;
+package main.Products;
 
 import java.time.Duration;
 import java.util.ArrayList;

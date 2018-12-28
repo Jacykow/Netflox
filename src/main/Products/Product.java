@@ -1,6 +1,7 @@
-package java.Products;
+package main.Products;
 
-import java.Entities.Distributor;
+import main.Entities.Distributor;
+
 import java.awt.*;
 import java.time.Duration;
 import java.time.Instant;

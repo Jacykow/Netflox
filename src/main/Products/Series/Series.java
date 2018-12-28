@@ -1,8 +1,8 @@
-package java.Products.Series;
+package main.Products.Series;
 
-import java.Products.Genre;
-import java.Products.IWatchable;
-import java.Products.Product;
+import main.Products.Product;
+import main.Products.Genre;
+
 import java.time.Duration;
 import java.util.ArrayList;
 

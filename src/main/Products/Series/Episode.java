@@ -1,6 +1,7 @@
-package java.Products.Series;
+package main.Products.Series;
 
-import java.Products.IWatchable;
+import main.Products.IWatchable;
+
 import java.time.Duration;
 import java.time.Instant;
 

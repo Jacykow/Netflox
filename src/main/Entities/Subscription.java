@@ -1,4 +1,4 @@
-package java.Entities;
+package main.Entities;
 
 public class Subscription {
 

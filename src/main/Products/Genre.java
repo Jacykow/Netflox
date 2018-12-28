@@ -1,4 +1,4 @@
-package java.Products;
+package main.Products;
 
 public enum Genre {
     Thriller,

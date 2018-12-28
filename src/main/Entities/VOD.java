@@ -1,6 +1,7 @@
-package java.Entities;
+package main.Entities;
 
-import java.Products.Product;
+import main.Products.Product;
+
 import java.util.ArrayList;
 
 public class VOD {
