@@ -4,14 +4,19 @@ import main.Entities.Distributor;
 import main.Entities.VOD;
 import main.Entities.User;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Simulation {
 
     public static final Duration DAY_DURATION = Duration.ofSeconds(60);
 
+    public static final Random random = new Random();
+
+    private IMDBConnection imdbConnection;
     private VOD vod;
     private ArrayList<User> users;
     private ArrayList<Distributor> distributors;
@@ -34,6 +39,14 @@ public class Simulation {
 
 
     private Simulation(){
+        imdbConnection = new IMDBConnection("a90bd77");
+        vod = new VOD();
+        try {
+            vod.addRandomProducts(1,imdbConnection);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println(vod.getProducts().get(0).getTitle());
         startTime = Instant.now();
     }
 

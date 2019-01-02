@@ -19,6 +19,7 @@ public class Controller implements Initializable {
     }
 
     public void startSim(ActionEvent actionEvent) {
+        startSimButton.setText("Restart");
         Simulation.start();
     }
 }
