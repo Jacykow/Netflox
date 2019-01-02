@@ -3,6 +3,7 @@ package main.gui;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import main.Products.Product;
 
 import java.io.IOException;
 
@@ -21,6 +22,11 @@ public class TitledDescription extends VBox {
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
+    }
+
+    public void setProduct(Product product){
+        setTitle(product.getTitle());
+        setDescription(product.getLongDescription());
     }
 
     public void setDescription(String description){

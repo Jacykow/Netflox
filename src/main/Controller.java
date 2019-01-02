@@ -10,6 +10,7 @@ import main.Products.Product;
 import main.gui.SimClock;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -30,7 +31,11 @@ public class Controller implements Initializable {
         products.setItems(FXCollections.observableArrayList(Simulation.getInstance().getVod().getProducts().
                 stream().map(Product::getTitle).collect(Collectors.toList())));
         products.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> selectedProduct.setTitle(newValue)
+                (observable, oldValue, newValue) -> {
+                    Optional<Product> productOptional = Simulation.getInstance().getVod().getProducts().stream().
+                            filter(product -> product.getTitle().equals(newValue)).findFirst();
+                    productOptional.ifPresent(product -> selectedProduct.setProduct(product));
+                }
         );
     }
 }

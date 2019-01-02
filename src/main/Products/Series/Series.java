@@ -13,13 +13,13 @@ public class Series extends Product {
     private ArrayList<String> actors;
     private ArrayList<Season> seasons;
 
-    public Series(JsonObject json) {
+    public Series(JsonObject json) throws NoSuchFieldException {
         super(json);
     }
 
     @Override
     public String getLongDescription() {
-        return getDescription();
+        return super.getLongDescription();
     }
 
     @Override

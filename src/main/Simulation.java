@@ -14,7 +14,7 @@ public class Simulation {
 
     public static final Duration DAY_DURATION = Duration.ofSeconds(30);
 
-    public static final Random random = new Random();
+    private static final Random random = new Random();
 
     private IMDBConnection imdbConnection;
     private VOD vod;
@@ -80,6 +80,10 @@ public class Simulation {
     }
 
 
+
+    public static Random getRandom(){
+        return random;
+    }
 
     private static Simulation instance;
 

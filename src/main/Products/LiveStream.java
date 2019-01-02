@@ -9,13 +9,13 @@ public class LiveStream extends Product{
     private Instant airDate;
     private Promotion promotion;
 
-    public LiveStream(JsonObject json) {
+    public LiveStream(JsonObject json) throws NoSuchFieldException {
         super(json);
     }
 
     @Override
     public String getLongDescription() {
-        return getDescription();
+        return super.getLongDescription();
     }
 
     @Override
