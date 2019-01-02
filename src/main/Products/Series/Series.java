@@ -1,5 +1,6 @@
 package main.Products.Series;
 
+import com.google.gson.JsonObject;
 import main.Products.Product;
 import main.Products.Genre;
 
@@ -11,6 +12,15 @@ public class Series extends Product {
     private Genre genre;
     private ArrayList<String> actors;
     private ArrayList<Season> seasons;
+
+    public Series(JsonObject json) {
+        super(json);
+    }
+
+    @Override
+    public String getLongDescription() {
+        return getDescription();
+    }
 
     @Override
     public Duration getDuration() {

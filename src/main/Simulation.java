@@ -12,7 +12,7 @@ import java.util.Random;
 
 public class Simulation {
 
-    public static final Duration DAY_DURATION = Duration.ofSeconds(60);
+    public static final Duration DAY_DURATION = Duration.ofSeconds(30);
 
     public static final Random random = new Random();
 
@@ -42,11 +42,10 @@ public class Simulation {
         imdbConnection = new IMDBConnection("a90bd77");
         vod = new VOD();
         try {
-            vod.addRandomProducts(1,imdbConnection);
+            vod.addRandomProducts(2,imdbConnection);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(vod.getProducts().get(0).getTitle());
         startTime = Instant.now();
     }
 

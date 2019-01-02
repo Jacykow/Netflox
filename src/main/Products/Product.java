@@ -1,5 +1,6 @@
 package main.Products;
 
+import com.google.gson.JsonObject;
 import main.Entities.Distributor;
 
 import java.awt.*;
@@ -17,6 +18,12 @@ public abstract class Product implements IWatchable{
     private Image image;
     private String title;
     private int value;
+
+    public abstract String getLongDescription();
+
+    public Product(JsonObject json){
+        setTitle(json.get("Title").getAsString());
+    }
 
 
 

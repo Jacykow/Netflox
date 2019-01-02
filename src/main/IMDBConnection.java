@@ -23,11 +23,14 @@ public class IMDBConnection {
 
     public Product getRandomProduct() throws IOException {
         while (true){
+            String id = getRandomID();
             try {
-                Product p = getProductFromObject(getObjectFromUrl(getUrlFromId(getRandomKey())));
+                Product p = getProductFromObject(getObjectFromUrl(getUrlFromId(id)));
                 reportCallAmount();
                 return p;
-            } catch (NoSuchFieldException ignored) {}
+            } catch (NoSuchFieldException ignored) {
+                System.err.println("missed at call " + calls + "\tid: " + id);
+            }
         }
     }
 
@@ -36,13 +39,13 @@ public class IMDBConnection {
     }
 
     public void reportCallAmount(){
-        System.err.println("Total calls: " + calls);
+        System.out.println("Total calls: " + calls);
     }
 
 
 
-    private String getRandomKey(){
-        return "tt" + Simulation.random.nextInt(6000000);
+    private String getRandomID(){
+        return "tt" + (Simulation.random.nextInt(5000000) + 1000000);
     }
 
     private String getUrlFromId(String id){
@@ -72,8 +75,6 @@ public class IMDBConnection {
             throw new NoSuchFieldException(object.get("Error").getAsString());
         }
 
-        Movie m = new Movie();
-        m.setTitle(object.get("Title").getAsString());
-        return m;
+        return new Movie(object);
     }
 }

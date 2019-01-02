@@ -1,5 +1,7 @@
 package main.Products;
 
+import com.google.gson.JsonObject;
+
 import java.time.Duration;
 import java.util.ArrayList;
 
@@ -9,6 +11,15 @@ public class Movie extends Product{
     private ArrayList<String> trailers;
     private Duration reviewTime;
     private Promotion promotion;
+
+    public Movie(JsonObject json) {
+        super(json);
+    }
+
+    @Override
+    public String getLongDescription() {
+        return getDescription();
+    }
 
     @Override
     public int getValue() {

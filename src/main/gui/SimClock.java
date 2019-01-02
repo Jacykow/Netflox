@@ -11,9 +11,9 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-public class Clock extends Label {
+public class SimClock extends Label {
 
-    public Clock() {
+    public SimClock() {
         bindToTime();
     }
 

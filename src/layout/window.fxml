@@ -2,11 +2,13 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.VBox?>
-<?import main.gui.Clock?>
+<?import main.gui.SimClock?>
+<?import main.gui.TitledDescription?>
 
 <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="400.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller">
    <Tab text="Simulation">
@@ -21,8 +23,14 @@
             <padding>
                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
             </padding>
-            <Clock fx:id="simDurationClock" />
+            <SimClock fx:id="simDurationClock" />
          </VBox>
+      </SplitPane>
+   </Tab>
+   <Tab text="Products">
+      <SplitPane dividerPositions="0.5">
+         <ListView fx:id="products" prefWidth="200.0"/>
+         <TitledDescription fx:id="selectedProduct" alignment="TOP_CENTER" prefWidth="200.0"/>
       </SplitPane>
    </Tab>
 </TabPane>
