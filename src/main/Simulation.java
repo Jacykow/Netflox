@@ -1,9 +1,11 @@
 package main;
 
 import main.Entities.Distributor;
-import main.Entities.VOD;
 import main.Entities.User;
+import main.Entities.VOD;
+import main.Misc.FileData;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
@@ -21,7 +23,7 @@ public class Simulation {
     private ArrayList<User> users;
     private ArrayList<Distributor> distributors;
     private Instant startTime;
-
+    private FileData fileData;
 
     public static Instant time(){
         if(!running()){
@@ -40,13 +42,19 @@ public class Simulation {
 
     private Simulation(){
         imdbConnection = new IMDBConnection("a90bd77");
-        vod = new VOD();
         try {
-            vod.addRandomProducts(2,imdbConnection);
+            setFileData(new FileData());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        setVod(new VOD());
+        try {
+            vod.addRandomProducts(3,imdbConnection,fileData);
         } catch (IOException e) {
             e.printStackTrace();
         }
         startTime = Instant.now();
+        System.out.println("Initialized!");
     }
 
     public Instant getSimTime(){
@@ -95,4 +103,11 @@ public class Simulation {
         return instance;
     }
 
+    public FileData getFileData() {
+        return fileData;
+    }
+
+    public void setFileData(FileData fileData) {
+        this.fileData = fileData;
+    }
 }
