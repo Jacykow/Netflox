@@ -2,70 +2,69 @@ package main.Products;
 
 import com.google.gson.JsonObject;
 import main.Entities.Distributor;
+import main.Simulation;
 
-import java.awt.*;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
-
-import static main.IMDBConnection.STUB_MESSAGE;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 
 public abstract class Product implements IWatchable{
 
     private float userScore;
     private String country;
     private Distributor distributor;
-    protected Duration duration;
-    private String premierDate;
+    private Duration duration;
+    private Instant premierDate;
     private String description;
-    private Image image;
+    private String imageUrl;
     private String title;
     private int value;
 
-    private final DateTimeFormatter formatter =
-            DateTimeFormatter.ofPattern( "yyyy-MM-dd" )
-                    .withLocale( Locale.getDefault() )
-                    .withZone( ZoneId.systemDefault() );
+    static final DateTimeFormatter FMT = new DateTimeFormatterBuilder()
+            .appendPattern("dd MM yyyy")
+            .parseDefaulting(ChronoField.NANO_OF_DAY, 0)
+            .toFormatter()
+            .withZone(ZoneId.of("Asia/Tokyo"));
 
     public String getLongDescription(){
-        String d = getDescription();
+        String d="";
+        d+="PremierDate: " + FMT.format(getPremierDate());
         d+="\n";
-        d+="PremierDate: " + premierDate;
+        d+="Country: " + getCountry();
         d+="\n";
+        d+="Duration: " + getDuration().toMinutes() + " minutes";
+        d+="\n";
+        d+="ImageUrl: " + getImageUrl();
+        d+="\n";
+        d+="User Score: " + getUserScore();
+        d+="\n";
+        d+=getDescription();
         return d;
     }
 
-    public Product(JsonObject json) throws NoSuchFieldException {
-        if(setTitle(json) == 0){
-            throw new NoSuchFieldException(STUB_MESSAGE);
+    public Product(JsonObject json) {
+        try {
+            setUserScore(json.get("imdbRating").getAsFloat());
+        } catch (Exception ignored){
+            setUserScore(0f);
         }
-
-        int a=0;
-        a += setPremierDate(json);
-        a += 2 * setDescription(json);
-        if((float)a / 3 < 0.5f){
-            throw new NoSuchFieldException(STUB_MESSAGE);
-        }
-    }
-
-
-    private int setTitle(JsonObject json){
-        setTitle(json.get("Title").getAsString());
-        return isNotAvailable(getDescription()) ? 0 : 1;
-    }
-
-    private int setPremierDate(JsonObject json){
-        setPremierDate(json.get("Released").getAsString());
-        return isNotAvailable(getDescription()) ? 0 : 1;
-    }
-
-    private int setDescription(JsonObject json){
+        setCountry(json.get("Country").getAsString());
+        // TODO distributor
+        setDuration(Duration.ofMinutes(Integer.valueOf(json.get("Runtime").getAsString()
+                .replaceFirst("\\D.*",""))));
+        setPremierDate(FMT.parse(json.get("Released").getAsString()
+                .replaceFirst("[A-Z,a-z]+", "0" +
+                        (Simulation.getRandom().nextInt(9)+1)), Instant::from));
         setDescription(json.get("Plot").getAsString());
-        return isNotAvailable(getDescription()) ? 0 : 1;
+        setImage(json.get("Poster").getAsString());
+        setTitle(json.get("Title").getAsString());
+        // TODO value
     }
 
-    private boolean isNotAvailable(String s){
+    public static boolean isNotAvailable(String s){
         return s==null || s.isEmpty() || s.equals("N/A");
     }
 
@@ -87,12 +86,12 @@ public abstract class Product implements IWatchable{
         this.title = title;
     }
 
-    public Image getImage() {
-        return image;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setImage(Image image) {
-        this.image = image;
+    public void setImage(String image) {
+        this.imageUrl = image;
     }
 
     public String getDescription() {
@@ -103,11 +102,11 @@ public abstract class Product implements IWatchable{
         this.description = description;
     }
 
-    public String getPremierDate() {
+    public Instant getPremierDate() {
         return premierDate;
     }
 
-    public void setPremierDate(String premierDate) {
+    public void setPremierDate(Instant premierDate) {
         this.premierDate = premierDate;
     }
 

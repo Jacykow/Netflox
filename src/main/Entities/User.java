@@ -9,6 +9,7 @@ public class User {
     private String email;
     private String creditCardNumber;
     private Subscription subscription;
+    private String name;
 
     public Instant getBirthDate() {
         return birthDate;
@@ -48,5 +49,13 @@ public class User {
 
     public void setSubscription(Subscription subscription) {
         this.subscription = subscription;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

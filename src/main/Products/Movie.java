@@ -12,13 +12,13 @@ public class Movie extends Product{
     private Duration reviewTime;
     private Promotion promotion;
 
-    public Movie(JsonObject json) throws NoSuchFieldException {
+    public Movie(JsonObject json) {
         super(json);
     }
 
     @Override
     public String getLongDescription() {
-        return super.getLongDescription();
+        return "A movie!\n" + super.getLongDescription();
     }
 
     @Override

@@ -1,6 +1,5 @@
 package main;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import main.Misc.RetryWithStringArgException;
@@ -14,7 +13,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Map;
 
 public class IMDBConnection {
 
@@ -65,7 +63,7 @@ public class IMDBConnection {
     }
 
     public String getUrlFromTitle(String title){
-        return "http://www.omdbapi.com/?t=" + title + "&plot=full&apikey=" + key;
+        return "http://www.omdbapi.com/?t=" + title.replace(" ","%20") + "&plot=full&apikey=" + key;
     }
 
     private JsonObject getObjectFromUrl(String url) throws IOException {
@@ -90,7 +88,7 @@ public class IMDBConnection {
         if(type.equals("episode")){
             String seriesId = json.get("seriesID").getAsString();
             if(seriesId.equals("N/A")){
-                throw new NoSuchFieldException(STUB_MESSAGE);
+                throw new NoSuchFieldException(STUB_MESSAGE + " No series ID.");
             }
             else {
                 throw new RetryWithStringArgException(seriesId);
@@ -98,14 +96,16 @@ public class IMDBConnection {
         }
         switch (type) {
             case "N/A":
-                throw new NoSuchFieldException(STUB_MESSAGE);
+                throw new NoSuchFieldException(STUB_MESSAGE + " No type.");
             case "series":
                 return new Series(json);
             case "movie":
-                if (Simulation.getRandom().nextFloat() < 0.5f) {
+                if (Simulation.getRandom().nextFloat() < 0.33f) {
                     return new Movie(json);
-                } else {
+                } else if (Simulation.getRandom().nextFloat() < 0.5f){
                     return new LiveStream(json);
+                } else {
+                    return new Series(json);
                 }
             default:
                 throw new NoSuchFieldException("Wrong product type: " + type);

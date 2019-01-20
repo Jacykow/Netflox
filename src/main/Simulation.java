@@ -49,7 +49,7 @@ public class Simulation {
         }
         setVod(new VOD());
         try {
-            vod.addRandomProducts(3,imdbConnection,fileData);
+            vod.addRandomProducts(10,imdbConnection,fileData);
         } catch (IOException e) {
             e.printStackTrace();
         }

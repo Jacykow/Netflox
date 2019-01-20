@@ -1,6 +1,7 @@
 package main.Entities;
 
 import main.IMDBConnection;
+import main.Misc.FileData;
 import main.Products.Product;
 
 import java.io.IOException;
@@ -14,9 +15,14 @@ public class VOD {
         products = new ArrayList<>();
     }
 
-    public void addRandomProducts(int amount, IMDBConnection connection) throws IOException {
+    public void addRandomProducts(int amount, IMDBConnection connection, FileData fileData) throws IOException {
         for(int x=0;x<amount;x++){
-            products.add(connection.getRandomProduct());
+            try {
+                products.add(connection.getProductFromTitle(fileData.GetRandomMovieTitle()));
+            } catch (NoSuchFieldException e) {
+                System.err.println(e.getMessage());
+                x--;
+            }
         }
     }
 
