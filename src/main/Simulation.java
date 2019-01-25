@@ -11,6 +11,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Timer;
 
 public class Simulation {
 
@@ -49,12 +50,23 @@ public class Simulation {
         }
         setVod(new VOD());
         try {
-            vod.addRandomProducts(10,imdbConnection,fileData);
+            vod.addRandomProducts(1,imdbConnection,fileData);
         } catch (IOException e) {
             e.printStackTrace();
         }
         startTime = Instant.now();
         System.out.println("Initialized!");
+        new Thread(() -> {
+            while (vod.getProducts().size() < 2){
+                try {
+                    Thread.sleep(3000);
+                    System.out.println("DING!!!");
+                    vod.addRandomProducts(1,imdbConnection,fileData);
+                } catch (InterruptedException | IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     public Instant getSimTime(){

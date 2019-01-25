@@ -1,10 +1,11 @@
 package main.Entities;
 
+import main.gui.IDescribable;
+
 import java.time.Instant;
 
-public class User {
+public class User implements IDescribable {
 
-    private int Id;
     private Instant birthDate;
     private String email;
     private String creditCardNumber;
@@ -17,14 +18,6 @@ public class User {
 
     public void setBirthDate(Instant birthDate) {
         this.birthDate = birthDate;
-    }
-
-    public int getId() {
-        return Id;
-    }
-
-    public void setId(int id) {
-        Id = id;
     }
 
     public String getEmail() {
@@ -57,5 +50,15 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String getGUILabel() {
+        return getName();
+    }
+
+    @Override
+    public String getGUIDescription() {
+        return getEmail();
     }
 }

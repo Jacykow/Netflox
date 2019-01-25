@@ -3,6 +3,7 @@ package main.Products;
 import com.google.gson.JsonObject;
 import main.Entities.Distributor;
 import main.Simulation;
+import main.gui.IDescribable;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -11,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 
-public abstract class Product implements IWatchable{
+public abstract class Product implements IWatchable, IDescribable {
 
     private float userScore;
     private String country;
@@ -66,6 +67,14 @@ public abstract class Product implements IWatchable{
 
     public static boolean isNotAvailable(String s){
         return s==null || s.isEmpty() || s.equals("N/A");
+    }
+
+    public String getGUIDescription(){
+        return getLongDescription();
+    }
+
+    public String getGUILabel(){
+        return getTitle();
     }
 
 
