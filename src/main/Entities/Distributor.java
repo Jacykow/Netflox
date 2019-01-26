@@ -8,20 +8,28 @@ public class Distributor implements IDescribable {
     private int costPerView;
     private int costPerMonth;
 
-    public Distributor random(){
+    public static Distributor random(String name){
+        if(name.equals("")){
+            return random();
+        }
+
         Distributor d = new Distributor();
+        d.setName(name);
+        if(Simulation.getRandom().nextFloat() > 0.5f){
+            d.setCostPerMonth(Simulation.getRandom().nextInt(900)+100);
+        }else {
+            d.setCostPerView(Simulation.getRandom().nextInt(40)+10);
+        }
+        return d;
+    }
+
+    public static Distributor random(){
         StringBuilder name = new StringBuilder();
         for (int x=0;x<3;x++){
             name.append((char) (Simulation.getRandom().nextInt('Z' - 'A') + 'A'));
         }
         name.append(" Company");
-        d.setName(name.toString());
-        if(Simulation.getRandom().nextFloat() > 0.5f){
-            setCostPerMonth(Simulation.getRandom().nextInt(900)+100);
-        }else {
-            setCostPerView(Simulation.getRandom().nextInt(40)+10);
-        }
-        return d;
+        return random(name.toString());
     }
 
     @Override

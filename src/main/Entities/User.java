@@ -1,10 +1,16 @@
 package main.Entities;
 
+import com.sun.javafx.binding.StringFormatter;
+import com.sun.xml.internal.ws.util.StringUtils;
+import javafx.util.StringConverter;
+import main.Simulation;
 import main.gui.IDescribable;
 
+import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
-public class User implements IDescribable {
+public class User implements IDescribable, Runnable {
 
     private Instant birthDate;
     private String email;
@@ -52,6 +58,24 @@ public class User implements IDescribable {
         this.name = name;
     }
 
+    public static User random(String name){
+        if(name.equals("")){
+            return random();
+        }
+        User u = new User();
+        u.setName(name);
+        u.setCreditCardNumber("1234 1234 1234 1234 1234 1234 1234");
+        u.setEmail(name.replace(' ','.').toLowerCase()+"@netfloxmail.com");
+        // TODO subscriptions
+        //u.setSubscription();
+        u.setBirthDate(Instant.now().minus(Duration.of((Simulation.getRandom().nextInt(70)+5)*365, ChronoUnit.DAYS)));
+        return u;
+    }
+
+    public static User random(){
+        return random(Simulation.getInstance().getFileData().GetRandomName());
+    }
+
     @Override
     public String getGUILabel() {
         return getName();
@@ -60,5 +84,10 @@ public class User implements IDescribable {
     @Override
     public String getGUIDescription() {
         return getEmail();
+    }
+
+    @Override
+    public void run() {
+        // TODO
     }
 }

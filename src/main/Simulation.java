@@ -11,13 +11,13 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Timer;
 
 public class Simulation {
 
-    public static final Duration DAY_DURATION = Duration.ofSeconds(30);
-
+    private static Simulation instance;
     private static final Random random = new Random();
+
+    public static final Duration DAY_DURATION = Duration.ofSeconds(30);
 
     private IMDBConnection imdbConnection;
     private VOD vod;
@@ -50,12 +50,13 @@ public class Simulation {
         }
         setVod(new VOD());
         try {
-            vod.addRandomProducts(1,imdbConnection,fileData);
+            getVod().addRandomProducts(1,imdbConnection,fileData);
         } catch (IOException e) {
             e.printStackTrace();
         }
         startTime = Instant.now();
         System.out.println("Initialized!");
+        /*
         new Thread(() -> {
             while (vod.getProducts().size() < 2){
                 try {
@@ -67,6 +68,7 @@ public class Simulation {
                 }
             }
         }).start();
+        */
     }
 
     public Instant getSimTime(){
@@ -105,8 +107,6 @@ public class Simulation {
         return random;
     }
 
-    private static Simulation instance;
-
     public static void start(){
         instance = new Simulation();
     }
@@ -121,5 +121,13 @@ public class Simulation {
 
     public void setFileData(FileData fileData) {
         this.fileData = fileData;
+    }
+
+    public IMDBConnection getImdbConnection() {
+        return imdbConnection;
+    }
+
+    public void setImdbConnection(IMDBConnection imdbConnection) {
+        this.imdbConnection = imdbConnection;
     }
 }

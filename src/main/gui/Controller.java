@@ -1,21 +1,19 @@
 package main.gui;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import main.Entities.Distributor;
+import main.Entities.User;
 import main.Simulation;
-import main.Products.Product;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 public class Controller implements Initializable {
 
@@ -23,6 +21,13 @@ public class Controller implements Initializable {
     public SimClock simDurationClock;
     public ListView<String> products;
     public TitledDescription selectedProduct;
+    public ListView<String> users;
+    public TitledDescription selectedUser;
+    public ListView<String> distributors;
+    public TextField productTitleTextField;
+    public TextField userTitleTextField;
+    public TextField distributorTitleTextField;
+    public TitledDescription selectedDistributor;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {}
@@ -31,18 +36,9 @@ public class Controller implements Initializable {
         startSimButton.setText("Restart");
         Simulation.start();
 
-        /*
-        products.setItems(FXCollections.observableArrayList(Simulation.getInstance().getVod().getProducts().
-                stream().map(Product::getTitle).collect(Collectors.toList())));
-        products.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> {
-                    Optional<Product> productOptional = Simulation.getInstance().getVod().getProducts().stream().
-                            filter(product -> product.getTitle().equals(newValue)).findFirst();
-                    productOptional.ifPresent(product -> selectedProduct.setContent(product));
-                }
-        );
-        */
         link(products, Simulation.getInstance().getVod().getProducts(), Simulation.getInstance().getVod().getProductLabels(), selectedProduct);
+        link(users, Simulation.getInstance().getVod().getUsers(),Simulation.getInstance().getVod().getUserLabels(), selectedUser);
+        link(distributors, Simulation.getInstance().getVod().getDistributors(),Simulation.getInstance().getVod().getDistributorLabels(), selectedDistributor);
     }
 
     private <T extends IDescribable> void link(ListView<String> listView, List<T> items, ObservableList<String> labels, TitledDescription selected){
@@ -54,5 +50,32 @@ public class Controller implements Initializable {
                     productOptional.ifPresent(selected::setContent);
                 }
         );
+    }
+
+    public void showError(String message){
+        System.err.println(message);
+    }
+
+    public void manualAddProduct(ActionEvent actionEvent) {
+        try {
+            if(productTitleTextField.getText().isEmpty()){
+                Simulation.getInstance().getVod().addRandomProducts(1, Simulation.getInstance().getImdbConnection(), Simulation.getInstance().getFileData());
+            } else {
+                Simulation.getInstance().getVod().addProduct(Simulation.getInstance().getImdbConnection().getProductFromTitle(productTitleTextField.getText()));
+                productTitleTextField.clear();
+            }
+        } catch (Exception e) {
+            showError(e.getMessage());
+        }
+    }
+
+    public void manualAddUser(ActionEvent actionEvent) {
+        Simulation.getInstance().getVod().addUser(User.random(userTitleTextField.getText()));
+        userTitleTextField.clear();
+    }
+
+    public void manualAddDistributor(ActionEvent actionEvent) {
+        Simulation.getInstance().getVod().addDistributor(Distributor.random(distributorTitleTextField.getText()));
+        distributorTitleTextField.clear();
     }
 }

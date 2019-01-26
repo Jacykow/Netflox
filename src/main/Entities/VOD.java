@@ -39,6 +39,11 @@ public class VOD {
     public VOD(){
         setProducts(new ArrayList<>());
         setProductLabels(FXCollections.observableArrayList());
+        setDistributors(new ArrayList<>());
+        setDistributorLabels(FXCollections.observableArrayList());
+        setUsers(new ArrayList<>());
+        setUserLabels(FXCollections.observableArrayList());
+        instantiateSubscriptions();
     }
 
     public void addRandomProducts(int amount, IMDBConnection connection, FileData fileData) throws IOException {
@@ -50,6 +55,11 @@ public class VOD {
                 x--;
             }
         }
+    }
+
+    private void instantiateSubscriptions(){
+        // TODO
+        // with GUI
     }
 
 
