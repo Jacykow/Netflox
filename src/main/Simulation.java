@@ -4,8 +4,7 @@ import main.Entities.VOD;
 import main.Misc.FileData;
 import main.Misc.IMDBConnection;
 
-import java.io.FileNotFoundException;
-import java.io.Serializable;
+import java.io.*;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Random;
@@ -17,12 +16,12 @@ public class Simulation implements Serializable {
 
     public static final Duration DAY_DURATION = Duration.ofSeconds(2);
 
-    private IMDBConnection imdbConnection;
+    private transient IMDBConnection imdbConnection;
     private VOD vod;
     private Instant startTime;
     private Duration simTime;
 
-    private FileData fileData;
+    private transient FileData fileData;
 
     private boolean running;
 
@@ -49,16 +48,29 @@ public class Simulation implements Serializable {
         pause();
     }
 
+    private static final String simSaveFile = "./src/data/sim_data.ser";
+
     public static void save(){
         pause();
-        // TODO save
-        start();
+        try {
+            ObjectOutputStream file = new ObjectOutputStream(new FileOutputStream(simSaveFile));
+            file.writeObject(getInstance());
+            file.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void load(){
         pause();
-        // TODO load
-        defaultInit(); // REMOVE asdfasdfas
+        try {
+            ObjectInputStream file = new ObjectInputStream(new FileInputStream(simSaveFile));
+            instance = (Simulation) file.readObject();
+            getInstance().afterSerializationRoutine();
+            file.close();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void start(){
@@ -72,16 +84,10 @@ public class Simulation implements Serializable {
     }
 
     private Simulation(){
-        setImdbConnection(new IMDBConnection("a90bd77"));
         startTime = Instant.now();
         simTime = Duration.ZERO;
-        try {
-            setFileData(new FileData());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
         setVod(new VOD());
-        System.out.println("Initialized!");
+        afterSerializationRoutine();
         /*
         new Thread(() -> {
             while (vod.getProducts().size() < 2){
@@ -95,6 +101,17 @@ public class Simulation implements Serializable {
             }
         }).start();
         */
+    }
+
+    public void afterSerializationRoutine(){
+        try {
+            setFileData(new FileData());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        setImdbConnection(new IMDBConnection("a90bd77"));
+        getVod().afterSerializationRoutine();
+        System.out.println("Initialized!");
     }
 
     public Instant getSimTime(){
