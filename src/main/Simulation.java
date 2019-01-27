@@ -61,16 +61,12 @@ public class Simulation implements Serializable {
         }
     }
 
-    public static void load(){
+    public static void load() throws IOException, ClassNotFoundException {
         pause();
-        try {
-            ObjectInputStream file = new ObjectInputStream(new FileInputStream(simSaveFile));
-            instance = (Simulation) file.readObject();
-            getInstance().afterSerializationRoutine();
-            file.close();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        ObjectInputStream file = new ObjectInputStream(new FileInputStream(simSaveFile));
+        instance = (Simulation) file.readObject();
+        getInstance().afterSerializationRoutine();
+        file.close();
     }
 
     public static void start(){

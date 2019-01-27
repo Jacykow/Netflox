@@ -5,12 +5,14 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import main.Entities.Distributor;
 import main.Entities.User;
 import main.Simulation;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -33,9 +35,12 @@ public class Controller implements Initializable {
     public Button pauseSimButton;
     public Button saveSimButton;
     public Button loadSimButton;
+    public Label errorBox;
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {}
+    public void initialize(URL location, ResourceBundle resources) {
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> showError(e.getMessage()));
+    }
 
     public void startSim(ActionEvent actionEvent) {
         Simulation.start();
@@ -58,6 +63,7 @@ public class Controller implements Initializable {
 
     public void showError(String message){
         System.err.println(message);
+        errorBox.setText(message);
     }
 
     public void manualAddProduct(ActionEvent actionEvent) {
@@ -92,6 +98,10 @@ public class Controller implements Initializable {
     }
 
     public void loadSim(ActionEvent actionEvent) {
-        Simulation.load();
+        try {
+            Simulation.load();
+        } catch (IOException | ClassNotFoundException e) {
+            showError(e.getMessage());
+        }
     }
 }
