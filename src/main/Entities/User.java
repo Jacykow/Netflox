@@ -70,8 +70,7 @@ public class User implements IDescribable, Runnable, Serializable {
         u.setName(name);
         u.setCreditCardNumber("1234 1234 1234 1234 1234 1234 1234");
         u.setEmail(name.replace(' ','.').toLowerCase()+"@netfloxmail.com");
-        // TODO subscriptions
-        //u.setSubscription();
+        u.setSubscription(Simulation.getInstance().getVod().getSubscriptions().get(Simulation.getRandom().nextInt(Simulation.getInstance().getVod().getSubscriptions().size())));
         u.setBirthDate(Instant.now().minus(Duration.of((Simulation.getRandom().nextInt(70)+5)*365, ChronoUnit.DAYS)));
         return u;
     }
@@ -87,7 +86,15 @@ public class User implements IDescribable, Runnable, Serializable {
 
     @Override
     public String getGUIDescription() {
-        return getEmail();
+        String d="";
+        d+="Mail: " + getEmail();
+        d+="\n";
+        d+="Subscription quality: " + getSubscription().getMaxQuality();
+        d+="\n";
+        d+="Credit card number: " + getCreditCardNumber();
+        d+="\n";
+        d+="Birth date: " + Product.FMT.format(getBirthDate());
+        return d;
     }
 
     @Override
@@ -110,11 +117,14 @@ public class User implements IDescribable, Runnable, Serializable {
                 Product product = Simulation.getInstance().getVod().getProducts().get(Simulation.getRandom()
                         .nextInt(Simulation.getInstance().getVod().getProducts().size()));
                 product.Watch();
-                System.out.println(getGUILabel() + " is watching " + product.getGUILabel());
+                if(getSubscription().getValue() == 0){
+                    Simulation.getInstance().getVod().changeBalance(product.getValue());
+                }
+                //System.out.println(getGUILabel() + " is watching " + product.getGUILabel());
                 k = (int) product.getDuration().toMinutes() * 100 + 2000;
             }
             try {
-                Thread.sleep(k);
+                Thread.sleep(k/5);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

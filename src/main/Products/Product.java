@@ -17,6 +17,7 @@ import java.util.Random;
 
 public abstract class Product implements IWatchable, IDescribable, Serializable {
 
+    private ArrayList<Instant> views;
     private float userScore;
     private String country;
     private Distributor distributor;
@@ -27,7 +28,7 @@ public abstract class Product implements IWatchable, IDescribable, Serializable 
     private String title;
     private int value;
 
-    static final DateTimeFormatter FMT = new DateTimeFormatterBuilder()
+    static final public DateTimeFormatter FMT = new DateTimeFormatterBuilder()
             .appendPattern("dd MM yyyy")
             .parseDefaulting(ChronoField.NANO_OF_DAY, 0)
             .toFormatter()
@@ -36,6 +37,8 @@ public abstract class Product implements IWatchable, IDescribable, Serializable 
     public String getLongDescription(){
         String d="";
         d+="PremierDate: " + FMT.format(getPremierDate());
+        d+="\n";
+        d+="Views: " + getViews().size();
         d+="\n";
         d+="Country: " + getCountry();
         d+="\n";
@@ -59,6 +62,7 @@ public abstract class Product implements IWatchable, IDescribable, Serializable 
 
     public Product(JsonObject json) {
         views = new ArrayList<>();
+        setValue(40);
         try {
             setUserScore(json.get("imdbRating").getAsFloat());
         } catch (Exception ignored){
@@ -69,15 +73,22 @@ public abstract class Product implements IWatchable, IDescribable, Serializable 
         if(list.size() > 0){
             setDistributor(list.get(Simulation.getRandom().nextInt(list.size())));
         }
-        setDuration(Duration.ofMinutes(Integer.valueOf(json.get("Runtime").getAsString()
-                .replaceFirst("\\D.*",""))));
-        setPremierDate(FMT.parse(json.get("Released").getAsString()
-                .replaceFirst("[A-Z,a-z]+", "0" +
-                        (Simulation.getRandom().nextInt(9)+1)), Instant::from));
+        try {
+            setDuration(Duration.ofMinutes(Integer.valueOf(json.get("Runtime").getAsString()
+                    .replaceFirst("\\D.*",""))));
+        }catch (Exception e){
+            setDuration(Duration.ofMinutes(60));
+        }
+        try {
+            setPremierDate(FMT.parse(json.get("Released").getAsString()
+                    .replaceFirst("[A-Z,a-z]+", "0" +
+                            (Simulation.getRandom().nextInt(9)+1)), Instant::from));
+        } catch (Exception e){
+            setPremierDate(Instant.now().minus(Duration.ofDays(2)));
+        }
         setDescription(json.get("Plot").getAsString());
         setImage(json.get("Poster").getAsString());
         setTitle(json.get("Title").getAsString());
-        setValue(0);
     }
 
     public static boolean isNotAvailable(String s){
@@ -96,8 +107,6 @@ public abstract class Product implements IWatchable, IDescribable, Serializable 
     public ArrayList<Instant> getViews() {
         return views;
     }
-
-    private ArrayList<Instant> views;
 
     public void Watch(){
         getViews().add(Simulation.getInstance().getSimTime());
@@ -159,6 +168,7 @@ public abstract class Product implements IWatchable, IDescribable, Serializable 
 
     public void setDistributor(Distributor distributor) {
         this.distributor = distributor;
+        setValue(distributor.getCostPerView());
     }
 
     public String getCountry() {

@@ -68,9 +68,11 @@ public class IMDBConnection {
     }
 
     private JsonObject getObjectFromUrl(String url) throws IOException {
+        /*
         if(calls > 30){
             throw new IOException("Too many calls to the API! Don't exhaust my key please.");
         }
+        */
         URLConnection request = new URL(url).openConnection();
 
         request.setConnectTimeout(2000);

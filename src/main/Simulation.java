@@ -88,8 +88,8 @@ public class Simulation implements Serializable {
         new Thread(() -> {
             while (running()){
                 try {
-                    Simulation.getInstance().getVod().addUser(User.random());
-                    Thread.sleep(1000);
+                    getInstance().getVod().addUser(User.random());
+                    Thread.sleep(Math.max(1000 - 5 * getInstance().getVod().getUsers().size(),100));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

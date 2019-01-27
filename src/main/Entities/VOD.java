@@ -12,6 +12,7 @@ import main.Simulation;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.time.ZoneId;
 import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalField;
 import java.time.temporal.TemporalUnit;
@@ -36,12 +37,17 @@ public class VOD implements Serializable {
     private ArrayList<Integer> monthlyBalance;
 
     public void changeBalance(int difference){
-        if(Simulation.getInstance().getSimTime().get(ChronoField.MONTH_OF_YEAR) != currentMonth){
-            checkMonthlyBalance();
+        if(Simulation.time().atZone(ZoneId.systemDefault()).toLocalDate().getMonthValue() != currentMonth){
+            //System.out.println("NEW MONTH!");
+            if(getMonthlyBalance().size() > 0) {
+                checkMonthlyBalance();
+            }
+            currentMonth = Simulation.time().atZone(ZoneId.systemDefault()).toLocalDate().getMonthValue();
             getMonthlyBalance().add(0);
         }
         int i = getMonthlyBalance().size()-1;
         getMonthlyBalance().set(i, getMonthlyBalance().get(i)+difference);
+        //System.out.println("BALANCE: " + getMonthlyBalance().get(i));
     }
 
     private void checkMonthlyBalance(){
@@ -62,7 +68,7 @@ public class VOD implements Serializable {
         System.out.println("MONTHLY BALANCE: " + b);
         getMonthlyBalance().set(i,b);
         if(getMonthlyBalance().size() >= 3){
-            if(getMonthlyBalance().get(i) < 0 || getMonthlyBalance().get(i-1) < 0 || getMonthlyBalance().get(i-2) < 0){
+            if(getMonthlyBalance().get(i) < 0 && getMonthlyBalance().get(i-1) < 0 && getMonthlyBalance().get(i-2) < 0){
                 Simulation.end();
             }
         }
@@ -70,7 +76,7 @@ public class VOD implements Serializable {
 
     public void addUser(User user){
         synchronized (users){
-            System.out.println("Adding user: " + user.getGUILabel());
+            //System.out.println("Adding user: " + user.getGUILabel());
             new Thread(user).start();
             getUsers().add(user);
             Platform.runLater(() -> getUserLabels().add(user.getGUILabel()));
@@ -79,7 +85,7 @@ public class VOD implements Serializable {
 
     public void addDistributor(Distributor distributor){
         synchronized (distributors){
-            System.out.println("Adding distributor: " + distributor.getGUILabel());
+            //System.out.println("Adding distributor: " + distributor.getGUILabel());
             new Thread(distributor).start();
             getDistributors().add(distributor);
             Platform.runLater(() -> getDistributorLabels().add(distributor.getGUILabel()));
@@ -88,7 +94,7 @@ public class VOD implements Serializable {
 
     public void addProduct(Product product){
         synchronized (products){
-            System.out.println("Adding product: " + product.getGUILabel());
+            //System.out.println("Adding product: " + product.getGUILabel());
             getProducts().add(product);
             Platform.runLater(() -> getProductLabels().add(product.getGUILabel()));
         }
@@ -128,10 +134,21 @@ public class VOD implements Serializable {
 
     public void instantiateDefaults(){
         setSubscriptions(new ArrayList<>());
+        Subscription s = new Subscription();
+        s.setMaxQuality("HD");
+        s.setValue(100);
+        getSubscriptions().add(s);
+        s = new Subscription();
+        s.setMaxQuality("MD");
+        s.setValue(0);
+        getSubscriptions().add(s);
         setPromotions(new ArrayList<>());
         Promotion promotion = new Promotion();
         promotion.init(0.5f);
         getPromotions().add(promotion);
+        for(int x=0;x<200;x++){
+            addUser(User.random());
+        }
     }
 
 

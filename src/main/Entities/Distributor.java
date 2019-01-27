@@ -80,10 +80,15 @@ public class Distributor implements IDescribable, Serializable, Runnable {
                     Product product = Simulation.getInstance().getImdbConnection().getProductFromTitle(
                             Simulation.getInstance().getFileData().GetRandomMovieTitle());
                     Simulation.getInstance().getVod().addProduct(product);
-                    Thread.sleep(Simulation.getRandom().nextInt(10000)+2000);
-                } catch (IOException | InterruptedException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 } catch (NoSuchFieldException ignored) {}
+            }
+
+            try {
+                Thread.sleep(Simulation.getRandom().nextInt(10000)+2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
