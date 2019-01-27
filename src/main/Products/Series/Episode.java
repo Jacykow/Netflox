@@ -2,10 +2,11 @@ package main.Products.Series;
 
 import main.Products.IWatchable;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
 
-public class Episode implements IWatchable {
+public class Episode implements IWatchable, Serializable {
 
     private Instant premierDate;
     private Duration duration;

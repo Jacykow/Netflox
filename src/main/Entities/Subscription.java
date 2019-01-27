@@ -1,6 +1,8 @@
 package main.Entities;
 
-public class Subscription {
+import java.io.Serializable;
+
+public class Subscription implements Serializable {
     private int value;
     private String maxQuality;
 

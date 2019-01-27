@@ -10,10 +10,11 @@ import main.Products.Promotion;
 import main.Simulation;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.time.Duration;
 import java.util.ArrayList;
 
-public class VOD {
+public class VOD implements Serializable {
 
     private ArrayList<Product> products;
     private ObservableList<String> productLabels;

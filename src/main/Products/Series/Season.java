@@ -2,10 +2,11 @@ package main.Products.Series;
 
 import main.Products.IWatchable;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.util.ArrayList;
 
-public class Season implements IWatchable {
+public class Season implements IWatchable, Serializable {
 
     private ArrayList<Episode> episodes;
 

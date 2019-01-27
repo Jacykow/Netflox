@@ -2,10 +2,11 @@ package main.Products;
 
 import main.Simulation;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
 
-public class Promotion {
+public class Promotion implements Serializable {
 
     private Instant beginningDate;
     private Instant endDate;

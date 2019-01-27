@@ -28,12 +28,14 @@ public class Controller implements Initializable {
     public TextField userTitleTextField;
     public TextField distributorTitleTextField;
     public TitledDescription selectedDistributor;
+    public Button pauseSimButton;
+    public Button saveSimButton;
+    public Button loadSimButton;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {}
 
     public void startSim(ActionEvent actionEvent) {
-        startSimButton.setText("Restart");
         Simulation.start();
 
         link(products, Simulation.getInstance().getVod().getProducts(), Simulation.getInstance().getVod().getProductLabels(), selectedProduct);
@@ -77,5 +79,17 @@ public class Controller implements Initializable {
     public void manualAddDistributor(ActionEvent actionEvent) {
         Simulation.getInstance().getVod().addDistributor(Distributor.random(distributorTitleTextField.getText()));
         distributorTitleTextField.clear();
+    }
+
+    public void pauseSim(ActionEvent actionEvent) {
+        Simulation.pause();
+    }
+
+    public void saveSim(ActionEvent actionEvent) {
+        Simulation.save();
+    }
+
+    public void loadSim(ActionEvent actionEvent) {
+        Simulation.load();
     }
 }

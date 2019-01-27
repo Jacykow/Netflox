@@ -3,7 +3,9 @@ package main.Entities;
 import main.Simulation;
 import main.gui.IDescribable;
 
-public class Distributor implements IDescribable {
+import java.io.Serializable;
+
+public class Distributor implements IDescribable, Serializable {
     private String name;
     private int costPerView;
     private int costPerMonth;

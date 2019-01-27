@@ -7,12 +7,13 @@ import main.Products.Product;
 import main.Simulation;
 import main.gui.IDescribable;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
-public class User implements IDescribable, Runnable {
+public class User implements IDescribable, Runnable, Serializable {
 
     private Instant birthDate;
     private String email;
@@ -90,6 +91,11 @@ public class User implements IDescribable, Runnable {
 
     @Override
     public void run() {
+        try {
+            Thread.sleep(Simulation.getRandom().nextInt(3000));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         while (Simulation.running()){
             int k;
             synchronized (Simulation.getInstance().getVod().getProducts()){

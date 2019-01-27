@@ -5,6 +5,7 @@ import main.Entities.Distributor;
 import main.Simulation;
 import main.gui.IDescribable;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -14,7 +15,7 @@ import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Random;
 
-public abstract class Product implements IWatchable, IDescribable {
+public abstract class Product implements IWatchable, IDescribable, Serializable {
 
     private float userScore;
     private String country;

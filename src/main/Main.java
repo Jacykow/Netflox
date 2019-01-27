@@ -10,6 +10,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+        Simulation.defaultInit();
         Parent root = FXMLLoader.load(getClass().getResource("../layout/window.fxml"));
         primaryStage.setTitle("Netflox");
         primaryStage.setScene(new Scene(root));

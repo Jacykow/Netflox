@@ -15,11 +15,14 @@
 <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.gui.Controller">
    <Tab text="Simulation">
       <SplitPane dividerPositions="0.5">
-         <VBox alignment="TOP_CENTER">
+         <VBox alignment="TOP_CENTER" spacing="3.0">
             <padding>
                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
             </padding>
             <Button fx:id="startSimButton" mnemonicParsing="false" onAction="#startSim" text="Start" />
+            <Button fx:id="pauseSimButton" mnemonicParsing="false" onAction="#pauseSim" text="Pause" />
+            <Button fx:id="saveSimButton" mnemonicParsing="false" onAction="#saveSim" text="Save" />
+            <Button fx:id="loadSimButton" mnemonicParsing="false" onAction="#loadSim" text="Load" />
          </VBox>
          <VBox alignment="TOP_CENTER" layoutX="10.0" layoutY="10.0">
             <padding>
@@ -33,11 +36,10 @@
       <SplitPane dividerPositions="0.5">
          <VBox>
             <HBox>
-               <Button mnemonicParsing="false" onAction="#manualAddProduct" text="Add Product"/>
-               <TextField fx:id="productTitleTextField" promptText="Enter title (empty = random)"
-                          HBox.hgrow="ALWAYS"/>
+               <Button mnemonicParsing="false" onAction="#manualAddProduct" text="Add Product" />
+               <TextField fx:id="productTitleTextField" promptText="Enter title (empty = random)" HBox.hgrow="ALWAYS" />
             </HBox>
-            <ListView fx:id="products" prefWidth="200.0" VBox.vgrow="ALWAYS"/>
+            <ListView fx:id="products" prefWidth="200.0" VBox.vgrow="ALWAYS" />
          </VBox>
          <TitledDescription fx:id="selectedProduct" alignment="TOP_CENTER" prefWidth="200.0" />
       </SplitPane>
@@ -46,10 +48,10 @@
       <SplitPane dividerPositions="0.5">
          <VBox>
             <HBox>
-               <Button mnemonicParsing="false" onAction="#manualAddUser" text="Add User"/>
-               <TextField fx:id="userTitleTextField" promptText="Enter title (empty = random)" HBox.hgrow="ALWAYS"/>
+               <Button mnemonicParsing="false" onAction="#manualAddUser" text="Add User" />
+               <TextField fx:id="userTitleTextField" promptText="Enter title (empty = random)" HBox.hgrow="ALWAYS" />
             </HBox>
-            <ListView fx:id="users" prefWidth="200.0" VBox.vgrow="ALWAYS"/>
+            <ListView fx:id="users" prefWidth="200.0" VBox.vgrow="ALWAYS" />
          </VBox>
          <TitledDescription fx:id="selectedUser" alignment="TOP_CENTER" prefWidth="200.0" />
       </SplitPane>
@@ -58,11 +60,10 @@
       <SplitPane dividerPositions="0.5">
          <VBox>
             <HBox>
-               <Button mnemonicParsing="false" onAction="#manualAddDistributor" text="Add Distributor"/>
-               <TextField fx:id="distributorTitleTextField" promptText="Enter title (empty = random)"
-                          HBox.hgrow="ALWAYS"/>
+               <Button mnemonicParsing="false" onAction="#manualAddDistributor" text="Add Distributor" />
+               <TextField fx:id="distributorTitleTextField" promptText="Enter title (empty = random)" HBox.hgrow="ALWAYS" />
             </HBox>
-            <ListView fx:id="distributors" prefWidth="200.0" VBox.vgrow="ALWAYS"/>
+            <ListView fx:id="distributors" prefWidth="200.0" VBox.vgrow="ALWAYS" />
          </VBox>
          <TitledDescription fx:id="selectedDistributor" alignment="TOP_CENTER" prefWidth="200.0" />
       </SplitPane>

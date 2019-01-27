@@ -5,24 +5,32 @@ import main.Misc.FileData;
 import main.Misc.IMDBConnection;
 
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Random;
 
-public class Simulation {
+public class Simulation implements Serializable {
 
     private static Simulation instance;
     private static final Random random = new Random();
 
-    public static final Duration DAY_DURATION = Duration.ofSeconds(30);
+    public static final Duration DAY_DURATION = Duration.ofSeconds(2);
 
     private IMDBConnection imdbConnection;
     private VOD vod;
     private Instant startTime;
+    private Duration simTime;
+
     private FileData fileData;
+
+    private boolean running;
 
     public static Instant time(){
         if(!running()){
+            if(getInstance()!=null){
+                return getInstance().startTime.plus(getInstance().simTime);
+            }
             return Instant.now();
         }
         else {
@@ -31,29 +39,48 @@ public class Simulation {
     }
 
     public static boolean running(){
-        return !(getInstance() == null);
+        if(getInstance() == null) return false;
+        return getInstance().running;
     }
 
-    public static void stopAndSave(){
-
-        instance = null;
+    public static void defaultInit(){
+        instance = new Simulation();
+        getInstance().getVod().instantiateDefaults();
+        pause();
     }
 
-    public static void loadAndResume(){
-
+    public static void save(){
+        pause();
+        // TODO save
+        start();
     }
 
+    public static void load(){
+        pause();
+        // TODO load
+        defaultInit(); // REMOVE asdfasdfas
+    }
 
+    public static void start(){
+        getInstance().startTime = Instant.now();
+        getInstance().setRunning(true);
+    }
+
+    public static void pause(){
+        getInstance().simTime = Duration.between(getInstance().startTime, time());
+        getInstance().setRunning(false);
+    }
 
     private Simulation(){
-        imdbConnection = new IMDBConnection("a90bd77");
+        setImdbConnection(new IMDBConnection("a90bd77"));
+        startTime = Instant.now();
+        simTime = Duration.ZERO;
         try {
             setFileData(new FileData());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
         setVod(new VOD());
-        startTime = Instant.now();
         System.out.println("Initialized!");
         /*
         new Thread(() -> {
@@ -71,7 +98,7 @@ public class Simulation {
     }
 
     public Instant getSimTime(){
-        return startTime.plus(Duration.between(startTime,Instant.now()).multipliedBy(Duration.ofDays(1).toNanos()/DAY_DURATION.toNanos()));
+        return startTime.plus(Duration.between(startTime,Instant.now()).multipliedBy(Duration.ofDays(1).toNanos()/DAY_DURATION.toNanos())).plus(simTime);
     }
 
 
@@ -84,15 +111,14 @@ public class Simulation {
         this.vod = vod;
     }
 
+    public void setRunning(boolean running) {
+        this.running = running;
+    }
+
 
 
     public static Random getRandom(){
         return random;
-    }
-
-    public static void start(){
-        instance = new Simulation();
-        getInstance().getVod().instantiateDefaults();
     }
 
     public static Simulation getInstance(){
