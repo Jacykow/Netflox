@@ -4,10 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import main.Entities.Distributor;
 import main.Entities.User;
 import main.Simulation;
@@ -36,15 +33,30 @@ public class Controller implements Initializable {
     public Button saveSimButton;
     public Button loadSimButton;
     public Label errorBox;
+    public TabPane mainTabPane;
+    public Tab mainTab;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Thread.setDefaultUncaughtExceptionHandler((t, e) -> showError(e.getMessage()));
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+            e.printStackTrace();
+            showError(e.getMessage());
+        });
+        setDisable(true);
+    }
+
+    private void setDisable(boolean disable){
+        for (Tab tab :
+                mainTabPane.getTabs()) {
+            if(tab != mainTab){
+                tab.setDisable(disable);
+            }
+        }
     }
 
     public void startSim(ActionEvent actionEvent) {
         Simulation.start();
-
+        setDisable(false);
         link(products, Simulation.getInstance().getVod().getProducts(), Simulation.getInstance().getVod().getProductLabels(), selectedProduct);
         link(users, Simulation.getInstance().getVod().getUsers(),Simulation.getInstance().getVod().getUserLabels(), selectedUser);
         link(distributors, Simulation.getInstance().getVod().getDistributors(),Simulation.getInstance().getVod().getDistributorLabels(), selectedDistributor);
@@ -69,7 +81,7 @@ public class Controller implements Initializable {
     public void manualAddProduct(ActionEvent actionEvent) {
         try {
             if(productTitleTextField.getText().isEmpty()){
-                Simulation.getInstance().getVod().addRandomProducts(1, Simulation.getInstance().getImdbConnection(), Simulation.getInstance().getFileData());
+                Simulation.getInstance().getVod().addRandomProduct();
             } else {
                 Simulation.getInstance().getVod().addProduct(Simulation.getInstance().getImdbConnection().getProductFromTitle(productTitleTextField.getText()));
                 productTitleTextField.clear();

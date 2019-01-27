@@ -1,5 +1,7 @@
 package main;
 
+import main.Entities.Distributor;
+import main.Entities.User;
 import main.Entities.VOD;
 import main.Misc.FileData;
 import main.Misc.IMDBConnection;
@@ -14,7 +16,7 @@ public class Simulation implements Serializable {
     private static Simulation instance;
     private static final Random random = new Random();
 
-    public static final Duration DAY_DURATION = Duration.ofSeconds(2);
+    public static final Duration DAY_DURATION = Duration.ofSeconds(1);
 
     private transient IMDBConnection imdbConnection;
     private VOD vod;
@@ -72,6 +74,27 @@ public class Simulation implements Serializable {
     public static void start(){
         getInstance().startTime = Instant.now();
         getInstance().setRunning(true);
+
+        new Thread(() -> {
+            while (running()){
+                try {
+                    Simulation.getInstance().getVod().addDistributor(Distributor.random());
+                    Thread.sleep(Simulation.getInstance().getVod().getDistributors().size() * 1000 + 2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+        new Thread(() -> {
+            while (running()){
+                try {
+                    Simulation.getInstance().getVod().addUser(User.random());
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     public static void pause(){
@@ -79,24 +102,16 @@ public class Simulation implements Serializable {
         getInstance().setRunning(false);
     }
 
+    public static void end(){
+        pause();
+        System.out.println("FINISHED!");
+    }
+
     private Simulation(){
         startTime = Instant.now();
         simTime = Duration.ZERO;
         setVod(new VOD());
         afterSerializationRoutine();
-        /*
-        new Thread(() -> {
-            while (vod.getProducts().size() < 2){
-                try {
-                    Thread.sleep(3000);
-                    System.out.println("DING!!!");
-                    vod.addRandomProducts(1,imdbConnection,fileData);
-                } catch (InterruptedException | IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-        */
     }
 
     public void afterSerializationRoutine(){

@@ -1,5 +1,6 @@
 package main.Entities;
 
+import com.sun.org.apache.xalan.internal.xsltc.dom.SAXImpl;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -7,42 +8,95 @@ import main.Misc.IMDBConnection;
 import main.Misc.FileData;
 import main.Products.Product;
 import main.Products.Promotion;
+import main.Simulation;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalField;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class VOD implements Serializable {
 
-    private ArrayList<Product> products;
+    private final ArrayList<Product> products = new ArrayList<>();
     private transient ObservableList<String> productLabels;
 
-    private ArrayList<User> users;
+    private final ArrayList<User> users = new ArrayList<>();
     private transient ObservableList<String> userLabels;
 
-    private ArrayList<Distributor> distributors;
+    private final ArrayList<Distributor> distributors = new ArrayList<>();
     private transient ObservableList<String> distributorLabels;
 
     private ArrayList<Subscription> subscriptions;
     private ArrayList<Promotion> promotions;
 
+    private int currentMonth;
+    private ArrayList<Integer> monthlyBalance;
+
+    public void changeBalance(int difference){
+        if(Simulation.getInstance().getSimTime().get(ChronoField.MONTH_OF_YEAR) != currentMonth){
+            checkMonthlyBalance();
+            getMonthlyBalance().add(0);
+        }
+        int i = getMonthlyBalance().size()-1;
+        getMonthlyBalance().set(i, getMonthlyBalance().get(i)+difference);
+    }
+
+    private void checkMonthlyBalance(){
+        int i = getMonthlyBalance().size()-1;
+        Integer b = getMonthlyBalance().get(i);
+        synchronized (Simulation.getInstance().getVod().getUsers()){
+            for (User u :
+                    Simulation.getInstance().getVod().getUsers()) {
+                b += u.getSubscription().getValue();
+            }
+        }
+        synchronized (Simulation.getInstance().getVod().getProducts()){
+            for (Product p :
+                    Simulation.getInstance().getVod().getProducts()) {
+                b -= p.getDistributor().getCostPerMonth();
+            }
+        }
+        System.out.println("MONTHLY BALANCE: " + b);
+        getMonthlyBalance().set(i,b);
+        if(getMonthlyBalance().size() >= 3){
+            if(getMonthlyBalance().get(i) < 0 || getMonthlyBalance().get(i-1) < 0 || getMonthlyBalance().get(i-2) < 0){
+                Simulation.end();
+            }
+        }
+    }
+
     public void addUser(User user){
-        getUsers().add(user);
-        Platform.runLater(() -> getUserLabels().add(user.getGUILabel()));
+        synchronized (users){
+            System.out.println("Adding user: " + user.getGUILabel());
+            new Thread(user).start();
+            getUsers().add(user);
+            Platform.runLater(() -> getUserLabels().add(user.getGUILabel()));
+        }
     }
 
     public void addDistributor(Distributor distributor){
-        getDistributors().add(distributor);
-        Platform.runLater(() -> getDistributorLabels().add(distributor.getGUILabel()));
+        synchronized (distributors){
+            System.out.println("Adding distributor: " + distributor.getGUILabel());
+            new Thread(distributor).start();
+            getDistributors().add(distributor);
+            Platform.runLater(() -> getDistributorLabels().add(distributor.getGUILabel()));
+        }
     }
 
     public void addProduct(Product product){
-        getProducts().add(product);
-        Platform.runLater(() -> getProductLabels().add(product.getGUILabel()));
+        synchronized (products){
+            System.out.println("Adding product: " + product.getGUILabel());
+            getProducts().add(product);
+            Platform.runLater(() -> getProductLabels().add(product.getGUILabel()));
+        }
     }
 
     public VOD(){
+        currentMonth = -1;
+        setMonthlyBalance(new ArrayList<>());
         setProducts(new ArrayList<>());
         setDistributors(new ArrayList<>());
         setUsers(new ArrayList<>());
@@ -63,10 +117,13 @@ public class VOD implements Serializable {
             try {
                 addProduct(connection.getProductFromTitle(fileData.GetRandomMovieTitle()));
             } catch (NoSuchFieldException e) {
-                //System.err.println(e.getMessage());
                 x--;
             }
         }
+    }
+
+    public void addRandomProduct() throws IOException {
+        addRandomProducts(1, Simulation.getInstance().getImdbConnection(), Simulation.getInstance().getFileData());
     }
 
     public void instantiateDefaults(){
@@ -75,7 +132,6 @@ public class VOD implements Serializable {
         Promotion promotion = new Promotion();
         promotion.init(0.5f);
         getPromotions().add(promotion);
-        // TODO with GUI
     }
 
 
@@ -85,7 +141,10 @@ public class VOD implements Serializable {
     }
 
     public void setProducts(ArrayList<Product> products) {
-        this.products = products;
+        synchronized (this.products){
+            products.clear();
+            this.products.addAll(products);
+        }
     }
 
     public ObservableList<String> getProductLabels() {
@@ -101,7 +160,10 @@ public class VOD implements Serializable {
     }
 
     public void setUsers(ArrayList<User> users) {
-        this.users = users;
+        synchronized (this.users){
+            users.clear();
+            this.users.addAll(users);
+        }
     }
 
     public ObservableList<String> getUserLabels() {
@@ -117,7 +179,10 @@ public class VOD implements Serializable {
     }
 
     public void setDistributors(ArrayList<Distributor> distributors) {
-        this.distributors = distributors;
+        synchronized (this.distributors){
+            distributors.clear();
+            this.distributors.addAll(distributors);
+        }
     }
 
     public ObservableList<String> getDistributorLabels() {
@@ -142,5 +207,13 @@ public class VOD implements Serializable {
 
     public void setPromotions(ArrayList<Promotion> promotions) {
         this.promotions = promotions;
+    }
+
+    public ArrayList<Integer> getMonthlyBalance() {
+        return monthlyBalance;
+    }
+
+    public void setMonthlyBalance(ArrayList<Integer> monthlyBalance) {
+        this.monthlyBalance = monthlyBalance;
     }
 }

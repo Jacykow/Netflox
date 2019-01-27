@@ -1,11 +1,13 @@
 package main.Entities;
 
+import main.Products.Product;
 import main.Simulation;
 import main.gui.IDescribable;
 
+import java.io.IOException;
 import java.io.Serializable;
 
-public class Distributor implements IDescribable, Serializable {
+public class Distributor implements IDescribable, Serializable, Runnable {
     private String name;
     private int costPerView;
     private int costPerMonth;
@@ -17,11 +19,8 @@ public class Distributor implements IDescribable, Serializable {
 
         Distributor d = new Distributor();
         d.setName(name);
-        if(Simulation.getRandom().nextFloat() > 0.5f){
-            d.setCostPerMonth(Simulation.getRandom().nextInt(900)+100);
-        }else {
-            d.setCostPerView(Simulation.getRandom().nextInt(40)+10);
-        }
+        d.setCostPerMonth(Simulation.getRandom().nextInt(900)+100);
+        d.setCostPerView(Simulation.getRandom().nextInt(40)+10);
         return d;
     }
 
@@ -41,8 +40,7 @@ public class Distributor implements IDescribable, Serializable {
 
     @Override
     public String getGUIDescription() {
-        return (getCostPerMonth() > 0)?("Cost per month: "+getCostPerMonth()+"\n"):
-                (getCostPerView() > 0)?("Cost per view: "+getCostPerView()+"\n"):"No cost!";
+        return "Cost per month: "+getCostPerMonth()+"\n"+"Cost per view: "+getCostPerView()+"\n";
     }
 
     public String getName() {
@@ -67,5 +65,26 @@ public class Distributor implements IDescribable, Serializable {
 
     public void setCostPerMonth(int costPerMonth) {
         this.costPerMonth = costPerMonth;
+    }
+
+    @Override
+    public void run() {
+        try {
+            Thread.sleep(Simulation.getRandom().nextInt(3000));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        while (Simulation.running()){
+            synchronized (Simulation.getInstance().getVod().getProducts()){
+                try {
+                    Product product = Simulation.getInstance().getImdbConnection().getProductFromTitle(
+                            Simulation.getInstance().getFileData().GetRandomMovieTitle());
+                    Simulation.getInstance().getVod().addProduct(product);
+                    Thread.sleep(Simulation.getRandom().nextInt(10000)+2000);
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                } catch (NoSuchFieldException ignored) {}
+            }
+        }
     }
 }

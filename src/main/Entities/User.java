@@ -7,6 +7,7 @@ import main.Products.Product;
 import main.Simulation;
 import main.gui.IDescribable;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
@@ -99,11 +100,18 @@ public class User implements IDescribable, Runnable, Serializable {
         while (Simulation.running()){
             int k;
             synchronized (Simulation.getInstance().getVod().getProducts()){
+                if(Simulation.getInstance().getVod().getProducts().size() == 0){
+                    try {
+                        Simulation.getInstance().getVod().addRandomProduct();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
                 Product product = Simulation.getInstance().getVod().getProducts().get(Simulation.getRandom()
                         .nextInt(Simulation.getInstance().getVod().getProducts().size()));
                 product.Watch();
                 System.out.println(getGUILabel() + " is watching " + product.getGUILabel());
-                k = (int) product.getDuration().toMinutes();
+                k = (int) product.getDuration().toMinutes() * 100 + 2000;
             }
             try {
                 Thread.sleep(k);
