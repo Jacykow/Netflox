@@ -3,11 +3,14 @@ package main.Entities;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import main.IMDBConnection;
+import main.Misc.IMDBConnection;
 import main.Misc.FileData;
 import main.Products.Product;
+import main.Products.Promotion;
+import main.Simulation;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 
 public class VOD {
@@ -20,6 +23,9 @@ public class VOD {
 
     private ArrayList<Distributor> distributors;
     private ObservableList<String> distributorLabels;
+
+    private ArrayList<Subscription> subscriptions;
+    private ArrayList<Promotion> promotions;
 
     public void addUser(User user){
         getUsers().add(user);
@@ -43,7 +49,6 @@ public class VOD {
         setDistributorLabels(FXCollections.observableArrayList());
         setUsers(new ArrayList<>());
         setUserLabels(FXCollections.observableArrayList());
-        instantiateSubscriptions();
     }
 
     public void addRandomProducts(int amount, IMDBConnection connection, FileData fileData) throws IOException {
@@ -57,9 +62,13 @@ public class VOD {
         }
     }
 
-    private void instantiateSubscriptions(){
-        // TODO
-        // with GUI
+    public void instantiateDefaults(){
+        setSubscriptions(new ArrayList<>());
+        setPromotions(new ArrayList<>());
+        Promotion promotion = new Promotion();
+        promotion.init(0.5f);
+        getPromotions().add(promotion);
+        // TODO with GUI
     }
 
 
@@ -110,5 +119,21 @@ public class VOD {
 
     public void setDistributorLabels(ObservableList<String> distributorLabels) {
         this.distributorLabels = distributorLabels;
+    }
+
+    public ArrayList<Subscription> getSubscriptions() {
+        return subscriptions;
+    }
+
+    public void setSubscriptions(ArrayList<Subscription> subscriptions) {
+        this.subscriptions = subscriptions;
+    }
+
+    public ArrayList<Promotion> getPromotions() {
+        return promotions;
+    }
+
+    public void setPromotions(ArrayList<Promotion> promotions) {
+        this.promotions = promotions;
     }
 }

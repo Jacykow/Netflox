@@ -1,4 +1,4 @@
-package main;
+package main.Misc;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -7,6 +7,7 @@ import main.Products.LiveStream;
 import main.Products.Movie;
 import main.Products.Product;
 import main.Products.Series.Series;
+import main.Simulation;
 
 import java.io.IOException;
 import java.io.InputStream;

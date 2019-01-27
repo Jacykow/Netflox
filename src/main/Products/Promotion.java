@@ -1,5 +1,8 @@
 package main.Products;
 
+import main.Simulation;
+
+import java.time.Duration;
 import java.time.Instant;
 
 public class Promotion {
@@ -13,6 +16,12 @@ public class Promotion {
     }
 
 
+
+    public void init(float value){
+        setValue(value);
+        setBeginningDate(Simulation.getInstance().getSimTime());
+        setEndDate(getBeginningDate().plus(Duration.ofDays(14)));
+    }
 
     public Instant getBeginningDate() {
         return beginningDate;

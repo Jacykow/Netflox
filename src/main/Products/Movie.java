@@ -1,9 +1,11 @@
 package main.Products;
 
 import com.google.gson.JsonObject;
+import main.Simulation;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Movie extends Product{
 
@@ -14,6 +16,8 @@ public class Movie extends Product{
 
     public Movie(JsonObject json) {
         super(json);
+        setActors(new ArrayList<>(Arrays.asList(json.get("Actors").getAsString().split(","))));
+        setReviewTime(getDuration().multipliedBy(2));
     }
 
     @Override
@@ -23,7 +27,11 @@ public class Movie extends Product{
 
     @Override
     public int getValue() {
-        return (int)(super.getValue() * getPromotion().getMultiplier());
+        try {
+            return (int)(super.getValue() * getPromotion().getMultiplier());
+        } catch (Exception e){
+            return super.getValue();
+        }
     }
 
     public ArrayList<String> getActors() {

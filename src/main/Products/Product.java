@@ -11,6 +11,8 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
+import java.util.ArrayList;
+import java.util.Random;
 
 public abstract class Product implements IWatchable, IDescribable {
 
@@ -36,7 +38,15 @@ public abstract class Product implements IWatchable, IDescribable {
         d+="\n";
         d+="Country: " + getCountry();
         d+="\n";
+        try {
+            d+="Distributor: " + getDistributor().getGUILabel();
+        }catch (Exception e){
+            d+="Distributor: " + "Self distributed";
+        }
+        d+="\n";
         d+="Duration: " + getDuration().toMinutes() + " minutes";
+        d+="\n";
+        d+="Value: " + getValue() + " PLN";
         d+="\n";
         d+="ImageUrl: " + getImageUrl();
         d+="\n";
@@ -47,13 +57,17 @@ public abstract class Product implements IWatchable, IDescribable {
     }
 
     public Product(JsonObject json) {
+        views = new ArrayList<>();
         try {
             setUserScore(json.get("imdbRating").getAsFloat());
         } catch (Exception ignored){
             setUserScore(0f);
         }
         setCountry(json.get("Country").getAsString());
-        // TODO distributor
+        ArrayList<Distributor> list =Simulation.getInstance().getVod().getDistributors();
+        if(list.size() > 0){
+            setDistributor(list.get(Simulation.getRandom().nextInt(list.size())));
+        }
         setDuration(Duration.ofMinutes(Integer.valueOf(json.get("Runtime").getAsString()
                 .replaceFirst("\\D.*",""))));
         setPremierDate(FMT.parse(json.get("Released").getAsString()
@@ -62,7 +76,7 @@ public abstract class Product implements IWatchable, IDescribable {
         setDescription(json.get("Plot").getAsString());
         setImage(json.get("Poster").getAsString());
         setTitle(json.get("Title").getAsString());
-        // TODO value
+        setValue(0);
     }
 
     public static boolean isNotAvailable(String s){
@@ -75,6 +89,17 @@ public abstract class Product implements IWatchable, IDescribable {
 
     public String getGUILabel(){
         return getTitle();
+    }
+
+
+    public ArrayList<Instant> getViews() {
+        return views;
+    }
+
+    private ArrayList<Instant> views;
+
+    public void Watch(){
+        getViews().add(Simulation.getInstance().getSimTime());
     }
 
 

@@ -20,7 +20,11 @@ public class LiveStream extends Product{
 
     @Override
     public int getValue() {
-        return (int)(super.getValue() * getPromotion().getMultiplier());
+        try {
+            return (int)(super.getValue() * getPromotion().getMultiplier());
+        } catch (Exception e){
+            return super.getValue();
+        }
     }
 
     public Instant getAirDate() {

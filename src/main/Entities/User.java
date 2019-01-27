@@ -3,12 +3,14 @@ package main.Entities;
 import com.sun.javafx.binding.StringFormatter;
 import com.sun.xml.internal.ws.util.StringUtils;
 import javafx.util.StringConverter;
+import main.Products.Product;
 import main.Simulation;
 import main.gui.IDescribable;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 
 public class User implements IDescribable, Runnable {
 
@@ -88,6 +90,20 @@ public class User implements IDescribable, Runnable {
 
     @Override
     public void run() {
-        // TODO
+        while (Simulation.running()){
+            int k;
+            synchronized (Simulation.getInstance().getVod().getProducts()){
+                Product product = Simulation.getInstance().getVod().getProducts().get(Simulation.getRandom()
+                        .nextInt(Simulation.getInstance().getVod().getProducts().size()));
+                product.Watch();
+                System.out.println(getGUILabel() + " is watching " + product.getGUILabel());
+                k = (int) product.getDuration().toMinutes();
+            }
+            try {
+                Thread.sleep(k);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

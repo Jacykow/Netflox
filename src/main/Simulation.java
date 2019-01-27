@@ -1,15 +1,12 @@
 package main;
 
-import main.Entities.Distributor;
-import main.Entities.User;
 import main.Entities.VOD;
 import main.Misc.FileData;
+import main.Misc.IMDBConnection;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Random;
 
 public class Simulation {
@@ -21,8 +18,6 @@ public class Simulation {
 
     private IMDBConnection imdbConnection;
     private VOD vod;
-    private ArrayList<User> users;
-    private ArrayList<Distributor> distributors;
     private Instant startTime;
     private FileData fileData;
 
@@ -39,6 +34,15 @@ public class Simulation {
         return !(getInstance() == null);
     }
 
+    public static void stopAndSave(){
+
+        instance = null;
+    }
+
+    public static void loadAndResume(){
+
+    }
+
 
 
     private Simulation(){
@@ -49,11 +53,6 @@ public class Simulation {
             e.printStackTrace();
         }
         setVod(new VOD());
-        try {
-            getVod().addRandomProducts(1,imdbConnection,fileData);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         startTime = Instant.now();
         System.out.println("Initialized!");
         /*
@@ -85,22 +84,6 @@ public class Simulation {
         this.vod = vod;
     }
 
-    public ArrayList<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(ArrayList<User> users) {
-        this.users = users;
-    }
-
-    public ArrayList<Distributor> getDistributors() {
-        return distributors;
-    }
-
-    public void setDistributors(ArrayList<Distributor> distributors) {
-        this.distributors = distributors;
-    }
-
 
 
     public static Random getRandom(){
@@ -109,6 +92,7 @@ public class Simulation {
 
     public static void start(){
         instance = new Simulation();
+        getInstance().getVod().instantiateDefaults();
     }
 
     public static Simulation getInstance(){
